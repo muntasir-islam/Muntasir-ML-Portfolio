@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUNTASIR | Deployed Systems</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* --- CORE VARIABLES --- */
+        :root {
+            --bg: #050505;
+            --text: #ffffff;
+            --neon-blue: #00f3ff;
+            --neon-red: #ff0055;
+            --neon-green: #00ff9d;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- CUSTOM CURSOR --- */
+        #cursor {
+            width: 20px; height: 20px;
+            border: 2px solid var(--neon-blue);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s;
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+        #cursor-dot {
+            width: 5px; height: 5px;
+            background: #fff;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- BACKGROUND --- */
+        #canvas-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+        }
+
+        /* --- HEADER --- */
+        header {
+            padding: 40px 10%;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 60px;
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            color: var(--text);
+            text-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        .status-dot {
+            height: 10px; width: 10px;
+            background-color: var(--neon-green);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px var(--neon-green);
+            margin-right: 10px;
+        }
+
+        /* --- PROJECTS GRID --- */
+        .container {
+            padding: 0 10%;
+            max-width: 1600px;
+            margin: 0 auto;
+            flex: 1; /* Pushes footer down */
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 50px;
+        }
+
+        /* --- 3D CARDS --- */
+        .card-wrap { perspective: 1000px; }
+
+        .card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 40px;
+            border-radius: 15px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.1s;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            transform: translateZ(40px);
+        }
+
+        .icon-box {
+            font-size: 2.5rem;
+            color: var(--neon-blue);
+            background: rgba(0, 243, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .project-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .project-desc {
+            color: #aaa;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            transform: translateZ(30px);
+        }
+
+        /* OUTCOME SECTION */
+        .outcome-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 3px solid var(--neon-green);
+            padding: 15px;
+            margin-bottom: 25px;
+            transform: translateZ(35px);
+        }
+        .outcome-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--neon-green);
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .outcome-text { font-size: 0.9rem; color: #ddd; }
+
+        /* TECH STACK */
+        .tech-stack {
+            margin-top: auto;
+            transform: translateZ(30px);
+        }
+        .tech-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #555;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .tags span {
+            display: inline-block;
+            font-size: 0.75rem;
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            margin-right: 6px;
+            margin-bottom: 6px;
+            border-radius: 4px;
+            color: var(--neon-blue);
+            background: rgba(0, 243, 255, 0.05);
+        }
+
+        /* BUTTONS */
+        .btn-launch {
+            display: block;
+            margin-top: 30px;
+            padding: 15px 0;
+            text-align: center;
+            background: var(--neon-blue);
+            color: #000;
+            text-decoration: none;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transform: translateZ(50px);
+            transition: 0.3s;
+            border: none;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        }
+        .btn-launch:hover {
+            background: #fff;
+            box-shadow: 0 0 20px var(--neon-blue);
+        }
+        .btn-disabled {
+            background: #222;
+            color: #555;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* SPECIFIC COLORS */
+        .card.red-theme .icon-box, .card.red-theme .tags span { color: var(--neon-red); border-color: rgba(255,0,85,0.3); }
+        .card.red-theme .icon-box { background: rgba(255,0,85,0.1); }
+        .card.red-theme:hover { border-color: var(--neon-red); }
+        
+        .card.green-theme .icon-box, .card.green-theme .tags span { color: var(--neon-green); border-color: rgba(0,255,157,0.3); }
+        .card.green-theme .icon-box { background: rgba(0,255,157,0.1); }
+        .card.green-theme:hover { border-color: var(--neon-green); }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 40px;
+            margin-top: 80px;
+            border-top: 1px solid var(--border);
+            color: #666;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 20px; text-align: center; }
+            .grid { grid-template-columns: 1fr; }
+            #cursor, #cursor-dot { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+    <div id="cursor-dot"></div>
+
+    <canvas id="canvas-bg"></canvas>
+
+    <header>
+        <div class="brand">MUNTASIR</div>
+        <div style="font-size: 0.8rem; color: #888;">
+            <span class="status-dot"></span>SYSTEM ONLINE
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="grid">
+            
+            <div class="card-wrap">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="project-title">DentalID System</div>
+                            <div style="color: var(--neon-blue); font-size: 0.8rem;">V 2.1.0 // ACTIVE</div>
+                        </div>
+                        <i class="fas fa-tooth icon-box"></i>
+                    </div>
+                    
+                    <p class="project-desc">
+                        Automated diagnostic pipeline for panoramic dental X-rays. Detects cavities, root canals, and implants using computer vision.
+                    </p>
+
+                    <div class="outcome-box">
+                        <span class="outcome-label">Outcome</span>
+                        <div class="outcome-text">Reduced diagnosis time by 40%. Generates instant PDF reports for clinics.</div>
+                    </div>
+
+                    <div class="tech-stack">
+                        <span class="tech-label">Core Architecture</span>
+                        <div class="tags">
+                            <span>YOLOv8</span>
+                            <span>FastAPI</span>
+                            <span>Python</span>
+                            <span>OpenCV</span>
+                            <span>WeasyPrint</span>
+                        </div>
+                    </div>
+
+                    <a href="/dental" class="btn-launch">Launch Interface</a>
+                </div>
+            </div>
+
+            <div class="card-wrap">
+                <div class="card red-theme">
+                    <div class="card-header">
+                        <div>
+                            <div class="project-title">HemoCount AI</div>
+                            <div style="color: var(--neon-red); font-size: 0.8rem;">V 1.0.4 // BETA</div>
+                        </div>
+                        <i class="fas fa-microscope icon-box"></i>
+                    </div>
+                    
+                    <p class="project-desc">
+                        Microscopic image analysis tool that segments and counts Red Blood Cells (RBC) and White Blood Cells (WBC) automatically.
+                    </p>
+
+                    <div class="outcome-box" style="border-color: var(--neon-red);">
+                        <span class="outcome-label" style="color: var(--neon-red);">Outcome</span>
+                        <div class="outcome-text">Replaces manual counting. Achieved 96% segmentation accuracy on blood smear datasets.</div>
+                    </div>
+
+                    <div class="tech-stack">
+                        <span class="tech-label">Core Architecture</span>
+                        <div class="tags">
+                            <span>U-Net (CNN)</span>
+                            <span>TensorFlow</span>
+                            <span>Image Segmentation</span>
+                            <span>Numpy</span>
+                        </div>
+                    </div>
+
+                    <a href="/hemo" class="btn-launch" style="background: var(--neon-red); color: white;">Launch Interface</a>
+                </div>
+            </div>
+
+            <div class="card-wrap">
+                <div class="card green-theme">
+                    <div class="card-header">
+                        <div>
+                            <div class="project-title">PneumoScan</div>
+                            <div style="color: var(--neon-green); font-size: 0.8rem;">V 3.2.1 // ARCHIVED</div>
+                        </div>
+                        <i class="fas fa-lungs icon-box"></i>
+                    </div>
+                    
+                    <p class="project-desc">
+                        Deep Learning classification model for Chest X-Rays. Features "Grad-CAM" heatmaps to visualize the infected lung regions.
+                    </p>
+
+                    <div class="outcome-box" style="border-color: var(--neon-green);">
+                        <span class="outcome-label" style="color: var(--neon-green);">Outcome</span>
+                        <div class="outcome-text">Provides Explainable AI (XAI) insights to help radiologists verify model decisions.</div>
+                    </div>
+
+                    <div class="tech-stack">
+                        <span class="tech-label">Core Architecture</span>
+                        <div class="tags">
+                            <span>DenseNet121</span>
+                            <span>PyTorch</span>
+                            <span>Grad-CAM</span>
+                            <span>Docker</span>
+                        </div>
+                    </div>
+
+                    <a href="#" class="btn-launch btn-disabled">Server Offline</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 Muntasir Islam
+    </footer>
+
+    <script>
+        // --- CURSOR LOGIC ---
+        const cursor = document.getElementById('cursor');
+        const dot = document.getElementById('cursor-dot');
+        
+        window.addEventListener('mousemove', (e) => {
+            dot.style.left = e.clientX + 'px';
+            dot.style.top = e.clientY + 'px';
+            setTimeout(() => {
+                cursor.style.left = (e.clientX - 10) + 'px';
+                cursor.style.top = (e.clientY - 10) + 'px';
+            }, 50);
+        });
+
+        // --- 3D TILT EFFECT ---
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                // Limit rotation to 5 degrees
+                const rotateX = ((y - centerY) / centerY) * -5;
+                const rotateY = ((x - centerX) / centerX) * 5;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0) rotateY(0)`;
+            });
+        });
+
+        // --- BACKGROUND PARTICLES ---
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particles = [];
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            for (let i = 0; i < 100; i++) particles.push(new Particle());
+        }
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        init();
+        animate();
+    </script>
+</body>
+</html>
