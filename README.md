@@ -1,6 +1,6 @@
 # 🌐 MUNTASIR ISLAM | Next-Gen AI/ML Portfolio
 
-![Portfolio Preview](https://via.placeholder.com/1000x500?text=Cyberpunk+Portfolio+Preview)
+![Portfolio Preview]([https://via.placeholder.com/1000x500?text=Cyberpunk+Portfolio+Preview](https://github.com/muntasir-islam/Muntasir-ML-Portfolio/blob/main/aiml-portfolio.png))
 ## 🚀 Overview
 This repository hosts the source code for my personal **AI/ML Engineering Portfolio**, deployed live at [ml.muntasirislam.com](https://ml.muntasirislam.com).
 
