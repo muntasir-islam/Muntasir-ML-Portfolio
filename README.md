@@ -1,6 +1,6 @@
 # 🌐 MUNTASIR ISLAM | Next-Gen AI/ML Portfolio
 
-![Portfolio Preview]([SEE HERE](https://github.com/muntasir-islam/Muntasir-ML-Portfolio/blob/main/aiml-portfolio.png))
+![Portfolio Preview]([SEE HERE](/aiml-portfolio.png))
 ## 🚀 Overview
 This repository hosts the source code for my personal **AI/ML Engineering Portfolio**, deployed live at [ml.muntasirislam.com](https://ml.muntasirislam.com).
 
