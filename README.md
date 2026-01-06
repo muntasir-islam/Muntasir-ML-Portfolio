@@ -21,6 +21,6 @@ Unlike standard bootstrap templates, this site is built from scratch to reflect 
 
 ## 📂 Project Structure
 ```text
-/var/www/ml-portfolio/
+/
 ├── index.html       # Single-file architecture containing structure, styles, and scripts
 └── assets/          # (Optional) Images and icons
